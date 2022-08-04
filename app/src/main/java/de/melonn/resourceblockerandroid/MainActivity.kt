@@ -11,6 +11,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
+import androidx.preference.PreferenceManager
 import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val address = "http://" + preferences.getString("host", "localhost") + ":" + preferences.getString("port", "5000")
+        findViewById<TextView>(R.id.textView).text = address
 
     }
 
