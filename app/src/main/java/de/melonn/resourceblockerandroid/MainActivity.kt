@@ -13,6 +13,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var server: ResourceBlockerBackend
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,9 +24,27 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val address = "http://" + preferences.getString("host", "localhost") + ":" + preferences.getString("port", "5000")
-        findViewById<TextView>(R.id.textView).text = address
+        server = ResourceBlockerBackend(
+            preferences.getString("host", "localhost")!!,
+            preferences.getString("port", "5000")!!.toInt()
+        )
 
+        server.requestResourceIds(idsReceived, displayConnectionError)
+
+    }
+
+    private val idsReceived: (List<String>) -> Unit = {
+        it.forEach { id ->
+            this@MainActivity.runOnUiThread {
+                findViewById<TextView>(R.id.textView).text = id
+            }
+        }
+    }
+
+    private val displayConnectionError: () -> Unit = {
+        this@MainActivity.runOnUiThread {
+            findViewById<TextView>(R.id.textView).text = "Connection Error"
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
