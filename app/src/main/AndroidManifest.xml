@@ -14,9 +14,13 @@
         android:theme="@style/Theme.ResourceBlockerAndroid"
         tools:targetApi="31">
         <activity
+            android:name=".SettingsActivity"
+            android:parentActivityName=".MainActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.ResourceBlockerAndroid.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

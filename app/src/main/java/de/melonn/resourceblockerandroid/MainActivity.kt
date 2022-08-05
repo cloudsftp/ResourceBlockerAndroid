@@ -1,14 +1,12 @@
 package de.melonn.resourceblockerandroid
 
+import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
+import androidx.preference.PreferenceManager
 import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +21,10 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val address = "http://" + preferences.getString("host", "localhost") + ":" + preferences.getString("port", "5000")
+        findViewById<TextView>(R.id.textView).text = address
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -36,7 +38,11 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
