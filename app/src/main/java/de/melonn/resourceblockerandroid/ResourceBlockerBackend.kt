@@ -5,7 +5,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.*
 import java.io.IOException
 
-data class ResourcesResponse(val resources: List<String>)
+data class ResourcesResponse(val stats: Map<String, ResourceStatus>)
 data class ResourceStatus(val name: String, val num: Int)
 data class UpdateResourceRequest(val delta: Int)
 
@@ -19,7 +19,7 @@ class ResourceBlockerBackend(host: String, port: Int) {
     private val statusJsonAdapter = moshi.adapter(ResourceStatus::class.java)
     private val updateJsonAdapter = moshi.adapter(UpdateResourceRequest::class.java)
 
-    fun requestResourceIds( resultCallback: (List<String>) -> Unit,
+    fun requestResourceIds( resultCallback: (Map<String, ResourceStatus>) -> Unit,
                             failureCallback: () -> Unit) {
 
         val request = Request.Builder().url(baseAddress).build()
@@ -30,7 +30,7 @@ class ResourceBlockerBackend(host: String, port: Int) {
 
             override fun onResponse(call: Call, response: Response) {
                 val result = resourcesJsonAdapter.fromJson(response.body!!.source())
-                resultCallback(result!!.resources)
+                resultCallback(result!!.stats)
             }
         })
     }

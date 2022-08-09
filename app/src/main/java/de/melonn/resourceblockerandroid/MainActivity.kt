@@ -33,12 +33,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private val idsReceived: (List<String>) -> Unit = {
-        it.forEach { id ->
+    private val idsReceived: (Map<String, ResourceStatus>) -> Unit = {
+        it.forEach { (_, res) ->
             this@MainActivity.runOnUiThread {
-                findViewById<TextView>(R.id.textView).text = id
+                findViewById<TextView>(R.id.textView).text = res.name
             }
         }
+
     }
 
     private val displayConnectionError: () -> Unit = {
