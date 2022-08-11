@@ -4,7 +4,7 @@
         <EditTextPreference
             app:key="host"
             app:title="@string/host_setting"
-            app:defaultValue="localhost"/>
+            app:defaultValue="0.0.0.0"/>
         <EditTextPreference
             app:key="port"
             app:title="@string/port_setting"

@@ -6,12 +6,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var server: ResourceBlockerBackend
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,10 +25,44 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val address = "http://" + preferences.getString("host", "localhost") + ":" + preferences.getString("port", "5000")
-        findViewById<TextView>(R.id.textView).text = address
+        server = ResourceBlockerBackend(
+            preferences.getString("host", "localhost")!!,
+            preferences.getString("port", "5000")!!.toInt()
+        )
+
+        server.requestResourceIds(idsReceived, displayError)
+        server.updateResource("fahrradbox1", 1, getResourceUpdatedFun("fahrradbox1"), displayError)
 
     }
+
+    private val idsReceived: (Map<String, ResourceStatus>) -> Unit = {
+        it.forEach { (_, res) ->
+            this@MainActivity.runOnUiThread {
+                findViewById<TextView>(R.id.textView).text = res.name
+                // TODO: list all resources
+            }
+        }
+    }
+
+    private val getResourceUpdatedFun: (String) -> (ResourceStatus) -> Unit =  {
+        id -> {
+            status -> this@MainActivity.runOnUiThread {
+                // TODO: implement
+            }
+        }
+    }
+
+    private val displayError: (ErrorType) -> Unit = {
+        type -> this@MainActivity.runOnUiThread {
+            val text = when (type) {
+                ErrorType.Internal -> R.string.internal_error
+                else -> R.string.connection_error
+            }
+
+            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
