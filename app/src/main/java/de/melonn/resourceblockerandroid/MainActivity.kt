@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
 
@@ -29,7 +30,8 @@ class MainActivity : AppCompatActivity() {
             preferences.getString("port", "5000")!!.toInt()
         )
 
-        server.requestResourceIds(idsReceived, displayConnectionError)
+        server.requestResourceIds(idsReceived, displayError)
+        server.updateResource("fahrradbox1", 1, getResourceUpdatedFun("fahrradbox1"), displayError)
 
     }
 
@@ -37,16 +39,30 @@ class MainActivity : AppCompatActivity() {
         it.forEach { (_, res) ->
             this@MainActivity.runOnUiThread {
                 findViewById<TextView>(R.id.textView).text = res.name
+                // TODO: list all resources
             }
         }
-
     }
 
-    private val displayConnectionError: () -> Unit = {
-        this@MainActivity.runOnUiThread {
-            findViewById<TextView>(R.id.textView).text = "Connection Error"
+    private val getResourceUpdatedFun: (String) -> (ResourceStatus) -> Unit =  {
+        id -> {
+            status -> this@MainActivity.runOnUiThread {
+                // TODO: implement
+            }
         }
     }
+
+    private val displayError: (ErrorType) -> Unit = {
+        type -> this@MainActivity.runOnUiThread {
+            val text = when (type) {
+                ErrorType.Internal -> R.string.internal_error
+                else -> R.string.connection_error
+            }
+
+            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

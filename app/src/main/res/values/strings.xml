@@ -7,4 +7,7 @@
     <string name="server_settings">Server Settings</string>
     <string name="host_setting">Host IP</string>
     <string name="port_setting">Port</string>
+
+    <string name="connection_error">Could not reach Server</string>
+    <string name="internal_error">Internal Server Error</string>
 </resources>
