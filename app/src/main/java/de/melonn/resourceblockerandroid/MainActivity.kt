@@ -5,17 +5,18 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var resources = listOf<ResourceStatus>()
-    private lateinit var resourceAdapter: ResourceAdapter
+    lateinit var resourceAdapter: ResourceAdapter
 
     private lateinit var server: ResourceBlockerBackend
+    private val resources = mutableListOf<ResourceStatus>()
+    private val responseHandler = ResponseHandler(resources, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,31 +35,13 @@ class MainActivity : AppCompatActivity() {
         resourceAdapter = ResourceAdapter(resources)
         binding.content.resourceRecyclerView.adapter = resourceAdapter
 
-        server.requestResourceIds(resourceStatsReceived, displayError)
-        server.updateResource("fahrradbox1", 1, getResourceUpdatedFun("fahrradbox1"), displayError)
+        val llm = LinearLayoutManager(applicationContext)
+        llm.orientation = LinearLayoutManager.VERTICAL
+        binding.content.resourceRecyclerView.layoutManager = llm
 
-    }
+        server.requestResourceIds(responseHandler)
+        server.updateResource("fahrradbox1", 1, responseHandler)
 
-    private val resourceStatsReceived: (Map<String, ResourceStatusResponse>) -> Unit = {
-        // TODO check if all IDs exist, add missing
-        // TODO update all existing IDs
-    }
-
-    private val getResourceUpdatedFun: (String) -> (ResourceStatus) -> Unit =  {
-        id -> {
-            // TODO get position of resource in list, update resource
-        }
-    }
-
-    private val displayError: (ErrorType) -> Unit = {
-        type -> this@MainActivity.runOnUiThread {
-            val text = when (type) {
-                ErrorType.Internal -> R.string.internal_error
-                else -> R.string.connection_error
-            }
-
-            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
-        }
     }
 
 

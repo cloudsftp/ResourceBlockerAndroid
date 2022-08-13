@@ -22,7 +22,13 @@ class ResourceAdapter(private val resources: List<ResourceStatus>) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.binding.textView.text = "bla"
+        var text = "bla"
+
+        for (i in 0..position) {
+            text += "a"
+        }
+
+        viewHolder.binding.textView.text = text
     }
 
     override fun getItemCount() = resources.size

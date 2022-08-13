@@ -30,30 +30,28 @@ class ResourceBlockerBackend(host: String, port: Int) {
     private val statusJsonAdapter = moshi.adapter(ResourceStatusResponse::class.java)
     private val updateJsonAdapter = moshi.adapter(UpdateResourceRequest::class.java)
 
-    fun requestResourceIds(resultCallback: (Map<String, ResourceStatusResponse>) -> Unit,
-                           failureCallback: (ErrorType) -> Unit) {
+    fun requestResourceIds(responseHandler: ResponseHandler) {
 
         val request = Request.Builder().url(baseAddress).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                failureCallback(ErrorType.Connection)
+                responseHandler.error(ErrorType.Connection)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 try {
                     val result = resourcesJsonAdapter.fromJson(response.body!!.source())
-                    resultCallback(result!!.stats)
+                    responseHandler.resourceStatsReceived(result!!.stats)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    failureCallback(ErrorType.Internal)
+                    responseHandler.error(ErrorType.Internal)
                 }
             }
         })
     }
 
     fun updateResource(id: String, delta: Int,
-                       resultCallback: (ResourceStatus) -> Unit,
-                       failureCallback: (ErrorType) -> Unit) {
+                       responseHandler: ResponseHandler) {
 
         val updateRequest = UpdateResourceRequest(id, delta)
         val updateRequestJson = updateJsonAdapter.toJson(updateRequest)
@@ -64,17 +62,16 @@ class ResourceBlockerBackend(host: String, port: Int) {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                failureCallback(ErrorType.Connection)
+                responseHandler.error(ErrorType.Connection)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    val statusResponse = statusJsonAdapter.fromJson(response.body!!.source())!!
-                    val status = ResourceStatus(id, statusResponse.name, statusResponse.num)
-                    resultCallback(status)
+                    val statusResponse = statusJsonAdapter.fromJson(response.body!!.source())
+                    responseHandler.resourceStatReceived(id, statusResponse!!)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    failureCallback(ErrorType.Internal)
+                    responseHandler.error(ErrorType.Internal)
                 }
             }
 
