@@ -3,12 +3,11 @@ package de.melonn.resourceblockerandroid
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.melonn.resourceblockerandroid.databinding.ResourceCardBinding
 
-class ResourceAdapter(private val resources: List<ResourceStatus>) :
-    RecyclerView.Adapter<ResourceAdapter.ViewHolder>() {
+class ResourceAdapter : RecyclerView.Adapter<ResourceAdapter.ViewHolder>() {
+    val resources = mutableListOf<ResourceStatus>()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = ResourceCardBinding.bind(view)
@@ -22,13 +21,7 @@ class ResourceAdapter(private val resources: List<ResourceStatus>) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        var text = "bla"
-
-        for (i in 0..position) {
-            text += "a"
-        }
-
-        viewHolder.binding.textView.text = text
+        viewHolder.binding.textView.text = resources[position].name
     }
 
     override fun getItemCount() = resources.size

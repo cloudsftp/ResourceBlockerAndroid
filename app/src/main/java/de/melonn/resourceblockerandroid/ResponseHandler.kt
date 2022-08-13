@@ -1,20 +1,31 @@
 package de.melonn.resourceblockerandroid
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 
-class ResponseHandler(private val resources: MutableList<ResourceStatus>, private val ma: MainActivity) {
+class ResponseHandler(private val resourceAdapter: ResourceAdapter, private val ma: MainActivity) {
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun resourceStatsReceived(statsResponse: Map<String, ResourceStatusResponse>): Unit {
-        // TODO check if all IDs exist, add missing
-        // TODO update all existing IDs
+    fun resourceStatsReceived(statsResponse: Map<String, ResourceStatusResponse>){
+        val resources = resourceAdapter.resources
 
-        resources.add(ResourceStatus("test", "Test", 1))
-        resources.add(ResourceStatus("test", "Test", 1))
+        val ids = resources.map { it.id }
+        val idsUpdated = mutableListOf<Int>()
+        val numIdsOriginal = ids.size
+
+        statsResponse.forEach { (id, response) ->
+            if (ids.contains(id)) {
+                val index = resources.indexOfFirst { it.id == id }
+                resources[index].num = response.num
+                idsUpdated.add(index)
+            } else {
+                resources.add(ResourceStatus(id, response.name, response.num))
+            }
+        }
 
         ma.runOnUiThread {
-            ma.resourceAdapter.notifyDataSetChanged()
+            idsUpdated.forEach { resourceAdapter.notifyItemChanged(it) }
+            if (numIdsOriginal < ids.size) {
+                resourceAdapter.notifyItemRangeInserted(numIdsOriginal, ids.size - numIdsOriginal)
+            }
         }
 
     }

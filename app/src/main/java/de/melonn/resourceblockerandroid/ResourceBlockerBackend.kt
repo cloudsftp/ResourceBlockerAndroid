@@ -10,7 +10,7 @@ import java.lang.Exception
 
 data class ResourcesResponse(val stats: Map<String, ResourceStatusResponse>)
 data class ResourceStatusResponse(val name: String, val num: Int)
-data class ResourceStatus(val id: String, val name: String, val num: Int)
+data class ResourceStatus(val id: String, val name: String, var num: Int)
 data class UpdateResourceRequest(val id: String, val delta: Int)
 
 val JSON = "application/json".toMediaTypeOrNull()

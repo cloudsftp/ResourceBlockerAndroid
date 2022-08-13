@@ -12,11 +12,11 @@ import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    lateinit var resourceAdapter: ResourceAdapter
 
     private lateinit var server: ResourceBlockerBackend
-    private val resources = mutableListOf<ResourceStatus>()
-    private val responseHandler = ResponseHandler(resources, this)
+    private val resourceAdapter = ResourceAdapter()
+    private val responseHandler = ResponseHandler(resourceAdapter, this)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
             preferences.getString("port", "5000")!!.toInt()
         )
 
-        resourceAdapter = ResourceAdapter(resources)
         binding.content.resourceRecyclerView.adapter = resourceAdapter
 
         val llm = LinearLayoutManager(applicationContext)
