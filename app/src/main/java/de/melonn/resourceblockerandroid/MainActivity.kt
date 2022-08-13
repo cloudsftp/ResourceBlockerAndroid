@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TextView
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
@@ -13,6 +12,8 @@ import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var resources = listOf<ResourceStatus>()
+    private lateinit var resourceAdapter: ResourceAdapter
 
     private lateinit var server: ResourceBlockerBackend
 
@@ -30,25 +31,22 @@ class MainActivity : AppCompatActivity() {
             preferences.getString("port", "5000")!!.toInt()
         )
 
-        server.requestResourceIds(idsReceived, displayError)
+        resourceAdapter = ResourceAdapter(resources)
+        binding.content.resourceRecyclerView.adapter = resourceAdapter
+
+        server.requestResourceIds(resourceStatsReceived, displayError)
         server.updateResource("fahrradbox1", 1, getResourceUpdatedFun("fahrradbox1"), displayError)
 
     }
 
-    private val idsReceived: (Map<String, ResourceStatus>) -> Unit = {
-        it.forEach { (_, res) ->
-            this@MainActivity.runOnUiThread {
-                findViewById<TextView>(R.id.textView).text = res.name
-                // TODO: list all resources
-            }
-        }
+    private val resourceStatsReceived: (Map<String, ResourceStatusResponse>) -> Unit = {
+        // TODO check if all IDs exist, add missing
+        // TODO update all existing IDs
     }
 
     private val getResourceUpdatedFun: (String) -> (ResourceStatus) -> Unit =  {
         id -> {
-            status -> this@MainActivity.runOnUiThread {
-                // TODO: implement
-            }
+            // TODO get position of resource in list, update resource
         }
     }
 

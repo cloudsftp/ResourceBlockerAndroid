@@ -8,8 +8,9 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.lang.Exception
 
-data class ResourcesResponse(val stats: Map<String, ResourceStatus>)
-data class ResourceStatus(val name: String, val num: Int)
+data class ResourcesResponse(val stats: Map<String, ResourceStatusResponse>)
+data class ResourceStatusResponse(val name: String, val num: Int)
+data class ResourceStatus(val id: String, val name: String, val num: Int)
 data class UpdateResourceRequest(val id: String, val delta: Int)
 
 val JSON = "application/json".toMediaTypeOrNull()
@@ -26,11 +27,11 @@ class ResourceBlockerBackend(host: String, port: Int) {
 
     private val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
     private val resourcesJsonAdapter = moshi.adapter(ResourcesResponse::class.java)
-    private val statusJsonAdapter = moshi.adapter(ResourceStatus::class.java)
+    private val statusJsonAdapter = moshi.adapter(ResourceStatusResponse::class.java)
     private val updateJsonAdapter = moshi.adapter(UpdateResourceRequest::class.java)
 
-    fun requestResourceIds( resultCallback: (Map<String, ResourceStatus>) -> Unit,
-                            failureCallback: (ErrorType) -> Unit) {
+    fun requestResourceIds(resultCallback: (Map<String, ResourceStatusResponse>) -> Unit,
+                           failureCallback: (ErrorType) -> Unit) {
 
         val request = Request.Builder().url(baseAddress).build()
         client.newCall(request).enqueue(object : Callback {
@@ -68,8 +69,9 @@ class ResourceBlockerBackend(host: String, port: Int) {
 
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    val result = statusJsonAdapter.fromJson(response.body!!.source())
-                    resultCallback(result!!)
+                    val statusResponse = statusJsonAdapter.fromJson(response.body!!.source())!!
+                    val status = ResourceStatus(id, statusResponse.name, statusResponse.num)
+                    resultCallback(status)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     failureCallback(ErrorType.Internal)
