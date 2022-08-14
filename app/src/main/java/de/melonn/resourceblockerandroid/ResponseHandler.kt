@@ -31,7 +31,7 @@ class ResponseHandler(private val ma: MainActivity) {
         val index = resources.indexOfFirst { it.id == id }
         resources[index].num = statusResponse.num
 
-        ma.notifyResourceAdapter()
+        ma.notifyResourceChanged(index)
     }
 
     fun error(type: ErrorType) {
