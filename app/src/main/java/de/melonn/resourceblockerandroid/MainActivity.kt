@@ -1,10 +1,12 @@
 package de.melonn.resourceblockerandroid
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.melonn.resourceblockerandroid.databinding.ActivityMainBinding
@@ -14,8 +16,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var server: ResourceBlockerBackend
-    private val resourceAdapter = ResourceAdapter()
-    private val responseHandler = ResponseHandler(resourceAdapter, this)
+    private val responseHandler = ResponseHandler(this)
+    private val resourceAdapter = ResourceAdapter(responseHandler)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +45,39 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun notifyResourceAdapter() {
+        this@MainActivity.runOnUiThread {
+            resourceAdapter.notifyDataSetChanged()
+        }
+    }
+
+/*
+    fun notifyDataChanged(ids: List<Int>) {
+        this@MainActivity.runOnUiThread {
+            ids.forEach {
+                resourceAdapter.notifyItemChanged(it)
+            }
+        }
+    }
+
+    fun notifyDataAdded(positionStart: Int, itemCount: Int) {
+        this@MainActivity.runOnUiThread {
+            resourceAdapter.notifyItemRangeInserted(positionStart, itemCount)
+        }
+    }
+*/
+
+    fun displayError(type: ErrorType) {
+        this@MainActivity.runOnUiThread {
+            val text = when (type) {
+                ErrorType.Internal -> R.string.internal_error
+                else -> R.string.connection_error
+            }
+
+            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
