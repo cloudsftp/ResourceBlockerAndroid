@@ -12,4 +12,7 @@
     <string name="internal_error">Internal Server Error</string>
 
     <string name="resource_name">Resource Name</string>
+
+    <string name="minus">-</string>
+    <string name="plus">+</string>
 </resources>

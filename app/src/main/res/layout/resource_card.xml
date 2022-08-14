@@ -18,13 +18,14 @@
             android:text="@string/resource_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textSize="24sp" />
+            android:textSize="@dimen/text_size" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnResourceMinus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-"
+            android:textSize="@dimen/text_size"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtResourceName"
             android:layout_marginStart="16dp"
@@ -35,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-9000"
-            android:textSize="24sp"
+            android:textSize="@dimen/text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnResourcePlus"
             app:layout_constraintStart_toEndOf="@+id/btnResourceMinus"
@@ -47,6 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+"
+            android:textSize="@dimen/text_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btnResourceMinus"
             android:layout_marginEnd="16dp" />
