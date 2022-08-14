@@ -11,7 +11,7 @@ import java.lang.Exception
 data class ResourcesResponse(val stats: Map<String, ResourceStatusResponse>)
 data class ResourceStatusResponse(val name: String, val num: Int)
 data class ResourceStatus(val id: String, val name: String, var num: Int)
-data class UpdateResourceRequest(val id: String, val delta: Int)
+data class UpdateResourceRequest(val delta: Int)
 
 val JSON = "application/json".toMediaTypeOrNull()
 
@@ -53,10 +53,10 @@ class ResourceBlockerBackend(host: String, port: Int) {
     fun updateResource(id: String, delta: Int,
                        responseHandler: ResponseHandler) {
 
-        val updateRequest = UpdateResourceRequest(id, delta)
+        val updateRequest = UpdateResourceRequest(delta)
         val updateRequestJson = updateJsonAdapter.toJson(updateRequest)
         val request = Request.Builder()
-            .url(baseAddress + id)
+            .url("$baseAddress$id/")
             .post(updateRequestJson.toRequestBody(JSON))
             .build()
 

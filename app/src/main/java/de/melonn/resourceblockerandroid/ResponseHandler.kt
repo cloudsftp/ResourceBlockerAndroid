@@ -3,9 +3,9 @@ package de.melonn.resourceblockerandroid
 import android.widget.Toast
 
 class ResponseHandler(private val ma: MainActivity) {
+    private val resources = ResourceStatusDAO.resources
 
     fun resourceStatsReceived(statsResponse: Map<String, ResourceStatusResponse>){
-        val resources = ResourceStatusDAO.resources
 
         val ids = resources.map { it.id }
         // val idsUpdated = mutableListOf<Int>()
@@ -28,7 +28,10 @@ class ResponseHandler(private val ma: MainActivity) {
     }
 
     fun resourceStatReceived(id: String, statusResponse: ResourceStatusResponse) {
-        // TODO get position of resource in list, update resource
+        val index = resources.indexOfFirst { it.id == id }
+        resources[index].num = statusResponse.num
+
+        ma.notifyResourceAdapter()
     }
 
     fun error(type: ErrorType) {

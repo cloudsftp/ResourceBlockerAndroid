@@ -16,8 +16,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var server: ResourceBlockerBackend
+    private lateinit var resourceAdapter: ResourceAdapter
     private val responseHandler = ResponseHandler(this)
-    private val resourceAdapter = ResourceAdapter(responseHandler)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity() {
             preferences.getString("port", "5000")!!.toInt()
         )
 
+        resourceAdapter = ResourceAdapter(server, responseHandler)
+
         binding.content.resourceRecyclerView.adapter = resourceAdapter
 
         val llm = LinearLayoutManager(applicationContext)
@@ -41,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         binding.content.resourceRecyclerView.layoutManager = llm
 
         server.requestResourceIds(responseHandler)
-        server.updateResource("fahrradbox1", 1, responseHandler)
 
     }
 

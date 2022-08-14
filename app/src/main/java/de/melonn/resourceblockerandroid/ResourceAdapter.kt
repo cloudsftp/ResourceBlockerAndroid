@@ -6,7 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import de.melonn.resourceblockerandroid.databinding.ResourceCardBinding
 
-class ResourceAdapter(private val responseHandler: ResponseHandler)
+class ResourceAdapter(private val server: ResourceBlockerBackend,
+                      private val responseHandler: ResponseHandler)
     : RecyclerView.Adapter<ResourceAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -21,8 +22,17 @@ class ResourceAdapter(private val responseHandler: ResponseHandler)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.binding.txtResourceName.text = ResourceStatusDAO.resources[position].name
-        viewHolder.binding.txtResourceNum.text = ResourceStatusDAO.resources[position].num.toString()
+        val resource = ResourceStatusDAO.resources[position]
+        viewHolder.binding.txtResourceName.text = resource.name
+        viewHolder.binding.txtResourceNum.text = resource.num.toString()
+
+        viewHolder.binding.btnResourceMinus.setOnClickListener {
+            server.updateResource(resource.id, -1, responseHandler)
+        }
+
+        viewHolder.binding.btnResourcePlus.setOnClickListener {
+            server.updateResource(resource.id, +1, responseHandler)
+        }
     }
 
     override fun getItemCount() = ResourceStatusDAO.resources.size
