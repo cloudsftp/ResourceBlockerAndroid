@@ -25,7 +25,7 @@ class ResourceBlockerBackend(host: String, port: Int) {
 
     private val baseAddress = "http://$host:$port/"
     private val client = OkHttpClient.Builder()
-        .callTimeout(500, TimeUnit.MILLISECONDS)
+        .callTimeout(2, TimeUnit.SECONDS)
         .build()
 
     private val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()

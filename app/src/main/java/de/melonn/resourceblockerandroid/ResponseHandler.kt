@@ -25,6 +25,7 @@ class ResponseHandler(private val ma: MainActivity) {
         // ma.notifyDataChanged(idsUpdated)
         // ma.notifyDataAdded(numIdsOriginal, resources.size - numIdsOriginal)
 
+        ma.displayLoading(false)
     }
 
     fun resourceStatReceived(id: String, statusResponse: ResourceStatusResponse) {
@@ -32,6 +33,7 @@ class ResponseHandler(private val ma: MainActivity) {
         resources[index].num = statusResponse.num
 
         ma.notifyResourceChanged(index)
+        ma.displayLoading(false)
     }
 
     fun error(type: ErrorType) {

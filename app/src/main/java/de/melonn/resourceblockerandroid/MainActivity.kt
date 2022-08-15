@@ -27,6 +27,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+
+        binding.content.swipeLayout.setOnRefreshListener {
+            server.requestResourceIds(responseHandler)
+        }
     }
 
     override fun onResume() {
@@ -43,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         binding.content.resourceRecyclerView.adapter = resourceAdapter
         binding.content.resourceRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
+        displayLoading(true)
         server.requestResourceIds(responseHandler)
     }
 
@@ -83,6 +88,13 @@ class MainActivity : AppCompatActivity() {
             }
 
             Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
+            displayLoading(false)
+        }
+    }
+
+    fun displayLoading(yes: Boolean) {
+        this@MainActivity.runOnUiThread {
+            binding.content.swipeLayout.isRefreshing = yes
         }
     }
 
