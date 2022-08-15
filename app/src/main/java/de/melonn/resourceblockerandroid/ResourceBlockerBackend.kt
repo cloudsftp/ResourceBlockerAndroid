@@ -7,6 +7,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.lang.Exception
+import java.util.concurrent.TimeUnit
 
 data class ResourcesResponse(val stats: Map<String, ResourceStatusResponse>)
 data class ResourceStatusResponse(val name: String, val num: Int)
@@ -23,7 +24,9 @@ enum class ErrorType {
 class ResourceBlockerBackend(host: String, port: Int) {
 
     private val baseAddress = "http://$host:$port/"
-    private val client = OkHttpClient()
+    private val client = OkHttpClient.Builder()
+        .callTimeout(2, TimeUnit.SECONDS)
+        .build()
 
     private val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
     private val resourcesJsonAdapter = moshi.adapter(ResourcesResponse::class.java)

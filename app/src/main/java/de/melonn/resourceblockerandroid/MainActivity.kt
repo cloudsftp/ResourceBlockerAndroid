@@ -28,6 +28,14 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+        binding.content.swipeLayout.setOnRefreshListener {
+            server.requestResourceIds(responseHandler)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         server = ResourceBlockerBackend(
             preferences.getString("host", "localhost")!!,
@@ -37,13 +45,10 @@ class MainActivity : AppCompatActivity() {
         resourceAdapter = ResourceAdapter(server, responseHandler)
 
         binding.content.resourceRecyclerView.adapter = resourceAdapter
+        binding.content.resourceRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
-        val llm = LinearLayoutManager(applicationContext)
-        llm.orientation = LinearLayoutManager.VERTICAL
-        binding.content.resourceRecyclerView.layoutManager = llm
-
+        displayLoading(true)
         server.requestResourceIds(responseHandler)
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -83,6 +88,13 @@ class MainActivity : AppCompatActivity() {
             }
 
             Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
+            displayLoading(false)
+        }
+    }
+
+    fun displayLoading(yes: Boolean) {
+        this@MainActivity.runOnUiThread {
+            binding.content.swipeLayout.isRefreshing = yes
         }
     }
 
