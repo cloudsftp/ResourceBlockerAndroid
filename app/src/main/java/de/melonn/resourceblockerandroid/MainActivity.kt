@@ -53,6 +53,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun notifyResourceChanged(id: Int) {
+        this@MainActivity.runOnUiThread {
+            resourceAdapter.notifyItemChanged(id)
+        }
+    }
+
 /*
     fun notifyDataChanged(ids: List<Int>) {
         this@MainActivity.runOnUiThread {
@@ -76,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                 else -> R.string.connection_error
             }
 
-            Toast.makeText(applicationContext, text, Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
         }
     }
 
