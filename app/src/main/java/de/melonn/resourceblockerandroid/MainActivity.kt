@@ -27,6 +27,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         server = ResourceBlockerBackend(
@@ -37,13 +41,9 @@ class MainActivity : AppCompatActivity() {
         resourceAdapter = ResourceAdapter(server, responseHandler)
 
         binding.content.resourceRecyclerView.adapter = resourceAdapter
-
-        val llm = LinearLayoutManager(applicationContext)
-        llm.orientation = LinearLayoutManager.VERTICAL
-        binding.content.resourceRecyclerView.layoutManager = llm
+        binding.content.resourceRecyclerView.layoutManager = LinearLayoutManager(applicationContext)
 
         server.requestResourceIds(responseHandler)
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
