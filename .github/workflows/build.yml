@@ -18,3 +18,9 @@ jobs:
         with:
           project-path: .
           output-path: resource-blocker-android.apk
+          gradleTask: assembleRelease
+      
+      - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: resource-blocker-android.apk
